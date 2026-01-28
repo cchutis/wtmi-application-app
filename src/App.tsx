@@ -107,59 +107,57 @@ export default function App() {
 
     return (
         <Container maxWidth={false} sx={{ py: 3 }}>
-            <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2 }}>
-                <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
-                    <Typography variant="h5" gutterBottom>
-                        2025 Employment Inquiry
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Touch-friendly multistep form with autosave.
-                    </Typography>
+            <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
+                <Typography variant="h5" gutterBottom>
+                    2025 Employment Inquiry
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    Touch-friendly multistep form with autosave.
+                </Typography>
 
-                    <Box mt={2}>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                            Step {isReview ? steps.length : activeStep + 1} of {steps.length}
-                        </Typography>
-                        <LinearProgress variant="determinate" value={((isReview ? steps.length : activeStep + 1) / steps.length) * 100} sx={{ height: 8, borderRadius: 4 }} />
-                        <Typography variant="caption" sx={{ mt: 0.5, display: 'block', textAlign: 'center' }}>
-                            {isReview ? 'Review' : steps[activeStep].label}
-                        </Typography>
-                    </Box>
-                    <Divider sx={{ my: 2 }} />
-
-                    <FormProvider {...methods}>
-                        {!isReview ? (
-                            <>
-                                <Box minHeight={220}>{steps[activeStep].content}</Box>
-                                <StepActions
-                                    activeStep={activeStep}
-                                    stepsCount={steps.length}
-                                    onBack={goBack}
-                                    onNext={async () => {
-                                        const fields = stepFieldNames[activeStep] ?? []
-                                        const valid = fields.length ? await trigger(fields as any) : true
-                                        if (!valid) return
-                                        setActiveStep((s) => Math.min(s + 1, steps.length - 1))
-                                    }}
-                                    onFinish={onFinish}
-                                    disableNext={false}
-                                />
-                            </>
-                        ) : (
-                            <Box>
-                                <Typography variant="h6" gutterBottom>
-                                    Results
-                                </Typography>
-                                <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(values, null, 2)}</pre>
-                                <Box display={{ xs: 'block', sm: 'flex' }} gap={2} mt={2}>
-                                    <button onClick={() => setActiveStep(0)}>Edit</button>
-                                    <button onClick={onReset}>Clear & Restart</button>
-                                </Box>
-                            </Box>
-                        )}
-                    </FormProvider>
+                <Box mt={2}>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        Step {isReview ? steps.length : activeStep + 1} of {steps.length}
+                    </Typography>
+                    <LinearProgress variant="determinate" value={((isReview ? steps.length : activeStep + 1) / steps.length) * 100} sx={{ height: 8, borderRadius: 4 }} />
+                    <Typography variant="caption" sx={{ mt: 0.5, display: 'block', textAlign: 'center' }}>
+                        {isReview ? 'Review' : steps[activeStep].label}
+                    </Typography>
                 </Box>
-            </Paper>
+                <Divider sx={{ my: 2 }} />
+
+                <FormProvider {...methods}>
+                    {!isReview ? (
+                        <>
+                            <Box minHeight={220}>{steps[activeStep].content}</Box>
+                            <StepActions
+                                activeStep={activeStep}
+                                stepsCount={steps.length}
+                                onBack={goBack}
+                                onNext={async () => {
+                                    const fields = stepFieldNames[activeStep] ?? []
+                                    const valid = fields.length ? await trigger(fields as any) : true
+                                    if (!valid) return
+                                    setActiveStep((s) => Math.min(s + 1, steps.length - 1))
+                                }}
+                                onFinish={onFinish}
+                                disableNext={false}
+                            />
+                        </>
+                    ) : (
+                        <Box>
+                            <Typography variant="h6" gutterBottom>
+                                Results
+                            </Typography>
+                            <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(values, null, 2)}</pre>
+                            <Box display={{ xs: 'block', sm: 'flex' }} gap={2} mt={2}>
+                                <button onClick={() => setActiveStep(0)}>Edit</button>
+                                <button onClick={onReset}>Clear & Restart</button>
+                            </Box>
+                        </Box>
+                    )}
+                </FormProvider>
+            </Box>
         </Container>
     )
 }
