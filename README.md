@@ -1,6 +1,6 @@
 # convention-form-app
 
-A Vite + React + TypeScript application for building and running a convention form experience. The app uses Material UI for UI components and react-hook-form for form management.
+A Vite + React + TypeScript application for building and running a convention form experience. The app uses Material UI for UI components and react-hook-form for form management
 
 ## Requirements
 
