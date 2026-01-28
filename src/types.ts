@@ -1,6 +1,7 @@
 export type FormValues = {
     email: string
-    fullName: string
+    firstName: string
+    lastName: string
     phoneNumber: string
 
     address: {
@@ -96,7 +97,8 @@ const initialGrid: Record<string, Record<string, boolean>> = Object.fromEntries(
 
 export const defaultValues: FormValues = {
     email: '',
-    fullName: '',
+    firstName: '',
+    lastName: '',
     phoneNumber: '',
 
     address: { street: '', city: '', state: '', zip: '' },

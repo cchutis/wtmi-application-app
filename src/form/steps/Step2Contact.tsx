@@ -17,7 +17,7 @@ export default function Step2Contact() {
                 render={({ field, fieldState }) => <TextField label="Email" inputMode="email" {...field} error={!!fieldState.error} helperText={fieldState.error?.message} />}
             />
             <Controller
-                name="phone"
+                name="phoneNumber"
                 control={control}
                 rules={{
                     pattern: { value: /^[0-9+()\-\s]*$/, message: 'Digits and +()- only' },

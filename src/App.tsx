@@ -64,7 +64,7 @@ export default function App() {
     const stepFieldNames: string[][] = useMemo(
         () => [
             [], // Welcome has no fields
-            ['email', 'fullName', 'phoneNumber'],
+            ['email', 'firstName', 'lastName', 'phoneNumber'],
             ['address.street', 'address.city', 'address.state', 'address.zip'],
             ['ageRange', 'gender', 'genderOther', 'sexualOrientation', 'sexualOrientationOther', 'race', 'ethnicity', 'raceEthnicityDescription'],
             ['educationLevel', 'contactMethod', 'contactMethodValue'],

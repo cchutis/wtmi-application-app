@@ -14,9 +14,9 @@ export default function StepContact() {
                     pattern: { value: /[^@\s]+@[^@\s]+\.[^@\s]+/, message: 'Enter a valid email' },
                 }}
                 render={({ field, fieldState }) => <TextField label="Email" inputMode="email" {...field} error={!!fieldState.error} helperText={fieldState.error?.message} />}
-            />
+            />            <Controller name="firstName" control={control} rules={{ required: 'First name is required' }} render={({ field, fieldState }) => <TextField label="First Name" {...field} error={!!fieldState.error} helperText={fieldState.error?.message} />} />
 
-            <Controller name="fullName" control={control} rules={{ required: 'Name is required' }} render={({ field, fieldState }) => <TextField label="Name" {...field} error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+            <Controller name="lastName" control={control} rules={{ required: 'Last name is required' }} render={({ field, fieldState }) => <TextField label="Last Name" {...field} error={!!fieldState.error} helperText={fieldState.error?.message} />} />
 
             <Controller
                 name="phoneNumber"
