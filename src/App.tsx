@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Container, Paper, Step, StepLabel, Stepper, Box, Typography, Divider } from '@mui/material'
+import { Container, Paper, Box, Typography, Divider, LinearProgress } from '@mui/material'
 import { FormProvider, useForm } from 'react-hook-form'
 import StepWelcome from './form/steps/StepWelcome'
 import StepContact from './form/steps/StepContact'
@@ -116,16 +116,15 @@ export default function App() {
                         Touch-friendly multistep form with autosave.
                     </Typography>
 
-                    <Box mt={2} sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <Stepper activeStep={isReview ? steps.length - 1 : activeStep} alternativeLabel sx={{ width: 'fit-content' }}>
-                            {steps.map((s, i) => (
-                                <Step key={s.label} completed={i < activeStep}>
-                                    <StepLabel>{s.label}</StepLabel>
-                                </Step>
-                            ))}
-                        </Stepper>
+                    <Box mt={2}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            Step {isReview ? steps.length : activeStep + 1} of {steps.length}
+                        </Typography>
+                        <LinearProgress variant="determinate" value={((isReview ? steps.length : activeStep + 1) / steps.length) * 100} sx={{ height: 8, borderRadius: 4 }} />
+                        <Typography variant="caption" sx={{ mt: 0.5, display: 'block', textAlign: 'center' }}>
+                            {isReview ? 'Review' : steps[activeStep].label}
+                        </Typography>
                     </Box>
-
                     <Divider sx={{ my: 2 }} />
 
                     <FormProvider {...methods}>
