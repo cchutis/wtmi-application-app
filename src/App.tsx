@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Container, Paper, Box, Typography, Divider, LinearProgress } from '@mui/material'
+import { Container, Paper, Box, Typography, Stack, Button } from '@mui/material'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
+import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import { FormProvider, useForm } from 'react-hook-form'
+import AppHeader from './components/AppHeader'
+import AppFooter from './components/AppFooter'
+import ChapterProgress, { Chapter } from './components/ChapterProgress'
 import StepWelcome from './form/steps/StepWelcome'
 import StepContact from './form/steps/StepContact'
 import StepAddress from './form/steps/StepAddress'
@@ -105,59 +111,156 @@ export default function App() {
 
     const isReview = activeStep === steps.length
 
+    const chapters: Chapter[] = useMemo(
+        () => [
+            { label: 'Welcome', start: 0, end: 0 },
+            { label: 'About You', start: 1, end: 4 },
+            { label: 'Work History', start: 5, end: 7 },
+            { label: 'For-Profit Interests', start: 8, end: 10 },
+            { label: 'Non-Profit Interests', start: 11, end: 13 },
+            { label: 'Preferences', start: 14, end: 16 },
+        ],
+        [],
+    )
+
+    const currentChapter = chapters.find((c) => activeStep >= c.start && activeStep <= c.end)
+    const currentStepLabel = isReview ? 'Review' : steps[activeStep].label
+
     return (
-        <Container maxWidth={false} sx={{ py: 3 }}>
-            <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
-                <Typography variant="h5" gutterBottom>
-                    2025 Employment Inquiry
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Touch-friendly multistep form with autosave.
-                </Typography>
+        <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <AppHeader />
 
-                <Box mt={2}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        Step {isReview ? steps.length : activeStep + 1} of {steps.length}
-                    </Typography>
-                    <LinearProgress variant="determinate" value={((isReview ? steps.length : activeStep + 1) / steps.length) * 100} sx={{ height: 8, borderRadius: 4 }} />
-                    <Typography variant="caption" sx={{ mt: 0.5, display: 'block', textAlign: 'center' }}>
-                        {isReview ? 'Review' : steps[activeStep].label}
-                    </Typography>
+            <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 }, flex: 1 }}>
+                <Box sx={{ mb: { xs: 3, md: 4 } }}>
+                    <ChapterProgress chapters={chapters} activeStep={activeStep} totalSteps={steps.length} isReview={isReview} />
                 </Box>
-                <Divider sx={{ my: 2 }} />
 
-                <FormProvider {...methods}>
-                    {!isReview ? (
-                        <>
-                            <Box minHeight={220}>{steps[activeStep].content}</Box>
-                            <StepActions
-                                activeStep={activeStep}
-                                stepsCount={steps.length}
-                                onBack={goBack}
-                                onNext={async () => {
-                                    const fields = stepFieldNames[activeStep] ?? []
-                                    const valid = fields.length ? await trigger(fields as any) : true
-                                    if (!valid) return
-                                    setActiveStep((s) => Math.min(s + 1, steps.length - 1))
-                                }}
-                                onFinish={onFinish}
-                                disableNext={false}
-                            />
-                        </>
-                    ) : (
-                        <Box>
-                            <Typography variant="h6" gutterBottom>
-                                Results
-                            </Typography>
-                            <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(values, null, 2)}</pre>
-                            <Box display={{ xs: 'block', sm: 'flex' }} gap={2} mt={2}>
-                                <button onClick={() => setActiveStep(0)}>Edit</button>
-                                <button onClick={onReset}>Clear & Restart</button>
-                            </Box>
-                        </Box>
-                    )}
-                </FormProvider>
-            </Box>
-        </Container>
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: { xs: 2.5, sm: 4, md: 5 },
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        boxShadow: '0 30px 80px -40px rgba(31,59,77,0.25), 0 8px 24px -16px rgba(31,59,77,0.15)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                    }}
+                >
+                    <Box
+                        aria-hidden
+                        sx={{
+                            position: 'absolute',
+                            inset: 0,
+                            pointerEvents: 'none',
+                            background: 'radial-gradient(600px 200px at 0% 0%, rgba(31,59,77,0.05), transparent 60%), radial-gradient(500px 200px at 100% 0%, rgba(200,85,61,0.06), transparent 60%)',
+                        }}
+                    />
+
+                    <Box sx={{ position: 'relative' }}>
+                        {!isReview && currentChapter && (
+                            <Stack spacing={0.5} sx={{ mb: 3 }}>
+                                <Typography variant="overline" sx={{ color: 'secondary.main', letterSpacing: '0.22em', fontSize: 11 }}>
+                                    {currentChapter.label}
+                                </Typography>
+                                <Typography variant="h4" component="h1">
+                                    {currentStepLabel}
+                                </Typography>
+                            </Stack>
+                        )}
+
+                        <FormProvider {...methods}>
+                            {!isReview ? (
+                                <>
+                                    <Box key={activeStep} className="wtmi-step-enter" sx={{ minHeight: 240 }}>
+                                        {steps[activeStep].content}
+                                    </Box>
+                                    <StepActions
+                                        activeStep={activeStep}
+                                        stepsCount={steps.length}
+                                        onBack={goBack}
+                                        onNext={async () => {
+                                            const fields = stepFieldNames[activeStep] ?? []
+                                            const valid = fields.length ? await trigger(fields as any) : true
+                                            if (!valid) return
+                                            setActiveStep((s) => Math.min(s + 1, steps.length - 1))
+                                        }}
+                                        onFinish={onFinish}
+                                        disableNext={false}
+                                    />
+                                </>
+                            ) : (
+                                <Box className="wtmi-step-enter">
+                                    <Stack spacing={2} alignItems="center" textAlign="center" sx={{ mb: 4 }}>
+                                        <Box
+                                            sx={{
+                                                width: 64,
+                                                height: 64,
+                                                borderRadius: '50%',
+                                                display: 'grid',
+                                                placeItems: 'center',
+                                                bgcolor: 'rgba(200,85,61,0.12)',
+                                                color: 'secondary.dark',
+                                            }}
+                                        >
+                                            <CheckCircleOutlineIcon sx={{ fontSize: 36 }} />
+                                        </Box>
+                                        <Typography variant="overline" color="secondary.main">
+                                            Submitted
+                                        </Typography>
+                                        <Typography variant="h4" component="h1">
+                                            Thank you
+                                        </Typography>
+                                        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 520 }}>
+                                            Your responses have been recorded. You can review the information you shared below, edit anything you’d like, or start over.
+                                        </Typography>
+                                    </Stack>
+
+                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="center" sx={{ mb: 4 }}>
+                                        <Button variant="contained" color="primary" startIcon={<EditOutlinedIcon />} onClick={() => setActiveStep(0)}>
+                                            Edit responses
+                                        </Button>
+                                        <Button variant="outlined" color="inherit" startIcon={<RestartAltIcon />} onClick={onReset} sx={{ borderColor: 'divider', color: 'text.secondary' }}>
+                                            Clear & Restart
+                                        </Button>
+                                    </Stack>
+
+                                    <Box
+                                        sx={{
+                                            mt: 2,
+                                            p: 2,
+                                            borderRadius: 2,
+                                            bgcolor: 'rgba(31,59,77,0.04)',
+                                            border: '1px solid',
+                                            borderColor: 'divider',
+                                        }}
+                                    >
+                                        <Typography variant="overline" sx={{ color: 'text.secondary', display: 'block', mb: 1 }}>
+                                            Your responses
+                                        </Typography>
+                                        <Box
+                                            component="pre"
+                                            sx={{
+                                                m: 0,
+                                                whiteSpace: 'pre-wrap',
+                                                wordBreak: 'break-word',
+                                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                                                fontSize: 12.5,
+                                                color: 'text.secondary',
+                                                maxHeight: 360,
+                                                overflow: 'auto',
+                                            }}
+                                        >
+                                            {JSON.stringify(values, null, 2)}
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            )}
+                        </FormProvider>
+                    </Box>
+                </Paper>
+            </Container>
+
+            <AppFooter />
+        </Box>
     )
 }
